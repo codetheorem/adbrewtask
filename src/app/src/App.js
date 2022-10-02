@@ -1,7 +1,7 @@
 import './App.css';
 import React, {useState,useEffect} from 'react';
-import apiClient from './services/api'
-import Todo from './components/Todo'
+import TodoList from './components/TodoList'
+import {addTodo,getTodos} from './services/todo';
 
 
 export function App() {
@@ -10,18 +10,17 @@ export function App() {
   const [todos, setTodos] = useState([]);
 
   useEffect(() => {
-    apiClient.get('/todos')
-    .then((response) => {
-      setTodos(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
+    getTodos().then((todos) => {
+      setTodos(todos);
     });
-  }, [todos]);
+  }, [todo]);
 
   const post_todo = (event) => {
-    let val = {todo: todo}
-    apiClient.post('/todos/', val)
+      addTodo(todo)
+  }
+
+  const insert_todo = (event) => {
+    setTodo(event.target.value);
   }
 
 
@@ -37,7 +36,7 @@ export function App() {
         <form onSubmit={post_todo}>
           <div>
             <label for="todo">ToDo: </label>
-            <input type="text" onChange={(e)=>setTodo(e.target.value)} />
+            <input type="text" onChange={insert_todo} />
           </div>
           <div style={{"marginTop": "5px"}}>
             <button type="submit">Add ToDo</button>
@@ -46,11 +45,7 @@ export function App() {
       </div>
       <div>
         <h1>TODOs</h1>
-        {
-          todos.map((todo) => {
-            return <Todo value={todo.todo} />
-          })
-        }
+           <TodoList todos={todos} />
       </div>
     </div>
   );
